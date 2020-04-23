@@ -1,3 +1,5 @@
+# 21930064 Jo Joon-Hee (jjh9490@gmail.com) forked this project for opensource midterm project
+=======================
 # Unity 2D Platformer Controller
 =======================
 
