@@ -3,7 +3,7 @@ using UnityEngine;
 /// <summary>
 /// This class is a simple example of how to build a controller that interacts with PlatformerMotor2D.
 /// </summary>
-[RequireComponent(typeof(PlatformerMotor2D))]
+[RequireComponent(typeof(PlatformerMotor2D))] // 반드시 자식 지정 하도록함
 public class PlayerController2D : MonoBehaviour
 {
     private PlatformerMotor2D _motor;
