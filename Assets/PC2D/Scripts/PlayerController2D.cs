@@ -3,18 +3,18 @@ using UnityEngine;
 /// <summary>
 /// This class is a simple example of how to build a controller that interacts with PlatformerMotor2D.
 /// </summary>
-[RequireComponent(typeof(PlatformerMotor2D))] // 반드시 자식 지정 하도록함
+[RequireComponent(typeof(PlatformerMotor2D))] // 복) 인스펙터에서 반드시 자식 지정 하도록함
 public class PlayerController2D : MonoBehaviour
 {
-    private PlatformerMotor2D _motor;
-    private bool _restored = true;
+    private PlatformerMotor2D _motor; // 변수 조정용 클래스
+    private bool _restored = true; // ?원웨이 플랫폼 관련 변수?
     private bool _enableOneWayPlatforms;
     private bool _oneWayPlatformsAreWalls;
 
     // Use this for initialization
     void Start()
     {
-        _motor = GetComponent<PlatformerMotor2D>();
+        _motor = GetComponent<PlatformerMotor2D>(); // 복) 인스턴스 지정
     }
 
     // before enter en freedom state for ladders
@@ -77,15 +77,17 @@ public class PlayerController2D : MonoBehaviour
             _motor.normalizedXMovement = 0;
         }
 
+        // 위나 아래 버튼 눌렀을때
         if (Input.GetAxis(PC2D.Input.VERTICAL) != 0)
         {
-            bool up_pressed = Input.GetAxis(PC2D.Input.VERTICAL) > 0;
-            if (_motor.IsOnLadder())
+            bool up_pressed = Input.GetAxis(PC2D.Input.VERTICAL) > 0; // 위버튼이었으면 t 아니면 f 플래그
+            // @@@@ 기능추가 원웨이 플랫폼 위에서 아래 버튼이랑 점프 눌렀을때 아래로 가기 @@@@
+            if (_motor.IsOnLadder()) // 사다리 타는중 상태일때 
             {
                 if (
-                    (up_pressed && _motor.ladderZone == PlatformerMotor2D.LadderZone.Top)
+                    (up_pressed && _motor.ladderZone == PlatformerMotor2D.LadderZone.Top) // 위버튼을 눌렀고, 사다리 제일 위라면
                     ||
-                    (!up_pressed && _motor.ladderZone == PlatformerMotor2D.LadderZone.Bottom)
+                    (!up_pressed && _motor.ladderZone == PlatformerMotor2D.LadderZone.Bottom) // 아래버튼을 눌렀고, 사다리 제일 아래라면
                  )
                 {
                     // do nothing!
