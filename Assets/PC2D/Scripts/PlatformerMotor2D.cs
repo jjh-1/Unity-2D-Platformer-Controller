@@ -65,12 +65,12 @@ public class PlatformerMotor2D : MonoBehaviour
     /// How much time does it take for the motor to get from zero speed to max speed. This value
     /// is used to calculate the acceleration.
     /// </summary>
-    public float timeToGroundSpeed = 0.1f;
+    public float groundSpeedZeroToMaxTime = 0.1f;
 
     /// <summary>
     /// The distance the motor will slide to a stop from full speed while on the ground.
     /// </summary>
-    public float groundStopDistance = 0.333f;
+    public float groundInertiaDistance = 0.333f;
 
     /// <summary>
     /// The maximum horizontal speed of the motor in the air.
@@ -84,16 +84,18 @@ public class PlatformerMotor2D : MonoBehaviour
     public bool changeDirectionInAir = true;
 
     /// <summary>
+    /// 가만히 점프후 이동이나 점프중 방향 전환시 x속도 0에서 최대속도까지 가는데 걸리는 시간 변수 ///
     /// The time it takes to move from zero horizontal speed to the maximum speed. This value is
     /// used to calculate the acceleration.
     /// </summary>
-    public float timeToAirSpeed = 0.2f;
+    public float midairSpeedZeroToMaxTime = 0.1f;
 
     /// <summary>
+    /// 공중 관성 거리 변수 ///
     /// The distance the motor will 'slide' to a stop while in the air. Only effects horizontal
     /// movement.
     /// </summary>
-    public float airStopDistance = 2f;
+    public float airInertiaDistance = 0.1f;
 
     /// <summary>
     /// The maximum speed that the motor will fall. Only effects vertical speed when falling.
@@ -2401,7 +2403,7 @@ public class PlatformerMotor2D : MonoBehaviour
 
                 GetSpeedAndMaxSpeedOnGround(out speed, out maxSpeed);
 
-                if (timeToGroundSpeed > 0)
+                if (groundSpeedZeroToMaxTime > 0)
                 {
                     // If we're moving faster than our normalizedXMovement * groundSpeed then decelerate rather than
                     // accelerate.
@@ -2419,7 +2421,7 @@ public class PlatformerMotor2D : MonoBehaviour
                         speed > 0 &&
                         normalizedXMovement < 0)
                     {
-                        float deceleration = (maxSpeed * maxSpeed) / (2 * groundStopDistance);
+                        float deceleration = (maxSpeed * maxSpeed) / (2 * groundInertiaDistance);
 
                         if (onSlope && changeSpeedOnSlopes)
                         {
@@ -2442,7 +2444,7 @@ public class PlatformerMotor2D : MonoBehaviour
                     }
                     else
                     {
-                        float acceleration = normalizedXMovement * (maxSpeed / timeToGroundSpeed);
+                        float acceleration = normalizedXMovement * (maxSpeed / groundSpeedZeroToMaxTime);
 
                         if (onSlope && changeSpeedOnSlopes)
                         {
@@ -2475,7 +2477,7 @@ public class PlatformerMotor2D : MonoBehaviour
             else if (changeDirectionInAir)
             {
                 // Air doesn't have to change how it represents speed.
-                if (timeToAirSpeed > 0)
+                if (midairSpeedZeroToMaxTime > 0)
                 {
                     if (_velocity.x > 0 &&
                         normalizedXMovement > 0 &&
@@ -2486,14 +2488,14 @@ public class PlatformerMotor2D : MonoBehaviour
                     {
                         speed = Decelerate(
                             _velocity.x,
-                            (airSpeed * airSpeed) / (2 * airStopDistance),
+                            (airSpeed * airSpeed) / (2 * airInertiaDistance),
                             normalizedXMovement * airSpeed);
                     }
                     else
                     {
                         speed = Accelerate(
                             _velocity.x,
-                            normalizedXMovement * (airSpeed / timeToAirSpeed),
+                            normalizedXMovement * (airSpeed / midairSpeedZeroToMaxTime),
                             normalizedXMovement * airSpeed);
                     }
                 }
@@ -2513,9 +2515,9 @@ public class PlatformerMotor2D : MonoBehaviour
                 {
                     GetSpeedAndMaxSpeedOnGround(out speed, out maxSpeed);
 
-                    if (groundStopDistance > 0)
+                    if (groundInertiaDistance > 0)
                     {
-                        float deceleration = (groundSpeed * groundSpeed) / (2 * groundStopDistance);
+                        float deceleration = (groundSpeed * groundSpeed) / (2 * groundInertiaDistance);
 
                         if (onSlope && changeSpeedOnSlopes)
                         {
@@ -2543,9 +2545,9 @@ public class PlatformerMotor2D : MonoBehaviour
             }
             else
             {
-                if (airStopDistance > 0)
+                if (airInertiaDistance > 0)
                 {
-                    speed = Decelerate(_velocity.x, (airSpeed * airSpeed) / (2 * airStopDistance), 0);
+                    speed = Decelerate(_velocity.x, (airSpeed * airSpeed) / (2 * airInertiaDistance), 0);
                 }
                 else
                 {
@@ -3382,11 +3384,11 @@ public class PlatformerMotor2D : MonoBehaviour
         // Show the distance that it will take for the motor to stop on the ground and air.
         Vector2 from = new Vector2(box.max.x, box.min.y);
         Gizmos.color = Color.green;
-        Gizmos.DrawLine(from, from + Vector2.right * groundStopDistance);
+        Gizmos.DrawLine(from, from + Vector2.right * groundInertiaDistance);
 
         from = box.max;
         Gizmos.color = Color.blue;
-        Gizmos.DrawLine(from, from + Vector2.right * airStopDistance);
+        Gizmos.DrawLine(from, from + Vector2.right * airInertiaDistance);
 
         if (movingPlatformDebug)
         {

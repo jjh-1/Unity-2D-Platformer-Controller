@@ -41,13 +41,13 @@ public class PlatformerMotor2DEditor : Editor
     private readonly Property RAYCASTS_PER_SIDE = new Property("additionalRaycastsPerSide", "Additional Raycasts per Side");
 
     private readonly Property GROUND_SPEED = new Property("groundSpeed", "Ground Speed");
-    private readonly Property TIME_TO_GROUND_SPEED = new Property("timeToGroundSpeed", "Time to Ground Speed");
-    private readonly Property GROUND_STOP_DISTANCE = new Property("groundStopDistance", "Ground Stop Distance");
+    private readonly Property GROUND_SPEED_ZERO_TO_MAX_TIME = new Property("groundSpeedZeroToMaxTime", "Ground Speed Zero to Max Time");
+    private readonly Property GROUND_INERTIA_DISTANCE = new Property("groundInertiaDistance", "Ground Inertia Distance");
 
     private readonly Property AIR_SPEED = new Property("airSpeed", "Air Speed");
     private readonly Property CHANGE_DIR_IN_AIR = new Property("changeDirectionInAir", "Enable Change Direction in Air");
-    private readonly Property TIME_TO_AIR_SPEED = new Property("timeToAirSpeed", "Time to Air Speed");
-    private readonly Property AIR_STOP_DISTANCE = new Property("airStopDistance", "Air Stop Distance");
+    private readonly Property MIDAIR_SPEED_ZERO_TO_MAX_TIME = new Property("midairSpeedZeroToMaxTime", "Midair Speed Zero to Max Time");
+    private readonly Property AIR_INERTIA_DISTANCE = new Property("airInertiaDistance", "Air Inertia Distance");
 
     private readonly Property FALL_SPEED = new Property("fallSpeed", "Fall Speed");
     private readonly Property GRAVITY_MUTLIPLIER = new Property("gravityMultiplier", "Fall Gravity Multiplier");
@@ -165,8 +165,8 @@ public class PlatformerMotor2DEditor : Editor
         if (_showMovement)
         {
             DisplayRateField(GROUND_SPEED);
-            DisplayAccelerationField(TIME_TO_GROUND_SPEED);
-            DisplayRegularField(GROUND_STOP_DISTANCE);
+            DisplayAccelerationField(GROUND_SPEED_ZERO_TO_MAX_TIME);
+            DisplayRegularField(GROUND_INERTIA_DISTANCE);
 
             EditorGUILayout.Separator();
 
@@ -176,8 +176,8 @@ public class PlatformerMotor2DEditor : Editor
 
             if (_properties[CHANGE_DIR_IN_AIR.name].hasMultipleDifferentValues || _properties[CHANGE_DIR_IN_AIR.name].boolValue)
             {
-                DisplayAccelerationField(TIME_TO_AIR_SPEED);
-                DisplayRegularField(AIR_STOP_DISTANCE);
+                DisplayAccelerationField(MIDAIR_SPEED_ZERO_TO_MAX_TIME);
+                DisplayRegularField(AIR_INERTIA_DISTANCE);
             }
 
             EditorGUILayout.Separator();
@@ -475,35 +475,35 @@ public class PlatformerMotor2DEditor : Editor
 
         sb.AppendFormat("Approx jump distance: {0}", GetJumpDistance());
 
-        if (_properties[TIME_TO_GROUND_SPEED.name].floatValue != 0)
+        if (_properties[GROUND_SPEED_ZERO_TO_MAX_TIME.name].floatValue != 0)
         {
             sb.AppendFormat(
                 "\nGround acceleration: {0}",
-                _properties[GROUND_SPEED.name].floatValue / _properties[TIME_TO_GROUND_SPEED.name].floatValue);
+                _properties[GROUND_SPEED.name].floatValue / _properties[GROUND_SPEED_ZERO_TO_MAX_TIME.name].floatValue);
         }
 
-        if (_properties[GROUND_STOP_DISTANCE.name].floatValue != 0)
+        if (_properties[GROUND_INERTIA_DISTANCE.name].floatValue != 0)
         {
             sb.AppendFormat(
                 "\nTime to stop on ground: {0}",
                 GetTimeToDistance(
-                    _properties[GROUND_STOP_DISTANCE.name].floatValue,
+                    _properties[GROUND_INERTIA_DISTANCE.name].floatValue,
                     _properties[GROUND_SPEED.name].floatValue));
         }
 
-        if (_properties[TIME_TO_AIR_SPEED.name].floatValue != 0 && _properties[CHANGE_DIR_IN_AIR.name].boolValue)
+        if (_properties[MIDAIR_SPEED_ZERO_TO_MAX_TIME.name].floatValue != 0 && _properties[CHANGE_DIR_IN_AIR.name].boolValue)
         {
             sb.AppendFormat(
                 "\nMax air acceleration: {0}",
-                _properties[AIR_SPEED.name].floatValue / _properties[TIME_TO_AIR_SPEED.name].floatValue);
+                _properties[AIR_SPEED.name].floatValue / _properties[MIDAIR_SPEED_ZERO_TO_MAX_TIME.name].floatValue);
         }
 
-        if (_properties[AIR_STOP_DISTANCE.name].floatValue != 0 && _properties[CHANGE_DIR_IN_AIR.name].boolValue)
+        if (_properties[AIR_INERTIA_DISTANCE.name].floatValue != 0 && _properties[CHANGE_DIR_IN_AIR.name].boolValue)
         {
             sb.AppendFormat(
                 "\nTime to stop on ground: {0}",
                 GetTimeToDistance(
-                    _properties[AIR_STOP_DISTANCE.name].floatValue,
+                    _properties[AIR_INERTIA_DISTANCE.name].floatValue,
                     _properties[AIR_SPEED.name].floatValue));
         }
 
