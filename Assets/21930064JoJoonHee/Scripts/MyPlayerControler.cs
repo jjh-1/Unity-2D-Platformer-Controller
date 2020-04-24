@@ -28,11 +28,27 @@ public class MyPlayerControler : MonoBehaviour
         // 이동방향 변수. 누른 버튼이 오른쪽 화살표면 벡터 스트럭트 변수의 x값은 1, 왼쪽 화살표면 -1, 안움직이면 0
         Vector2 moveDir = new Vector2();
         moveDir.x = Input.GetAxis(MYGLOBAL.MyInput.BUTTON_HORIZONTAL_MOVE);
+        // ! 나중 대비용 moveDir 벡터 y값 지정 코드
+        //moveDir.y = Input.GetAxis(MYGLOBAL.MyInput.BUTTON_VERTICAL_MOVE);
         // 이동방향은 플레이어 컨트롤의 영역이니 여기서 처리하고 엔진 스크립트에 넘겨줌
         engine.SetMoveDir(moveDir);
 
-        // [버튼에 의한 점프]
-        if(Input.GetButtonDown(MYGLOBAL.MyInput.BUTTON_JUMP)
+        // [버튼누른 순간의 도약 점프]
+        if(Input.GetButtonDown(MYGLOBAL.MyInput.BUTTON_JUMP))
+        {
+            engine.Jump();
+        }
 
+        // @변경@ [버튼 떼면 상승 멈추게 할것]
+        if (Input.GetButtonUp(MYGLOBAL.MyInput.BUTTON_JUMP))
+        {
+            engine.JumpStop();
+        }
+
+        // [버튼 누르면 대쉬]
+        if(Input.GetButtonDown(MYGLOBAL.MyInput.BUTTON_DASH))
+        {
+            engine.Dash();
+        }
     }
 }
