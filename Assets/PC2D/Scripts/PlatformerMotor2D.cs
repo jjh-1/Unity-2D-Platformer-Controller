@@ -40,7 +40,7 @@ public class PlatformerMotor2D : MonoBehaviour
     /// if enableOneWayPlatforms is disabled how the motor should treat OWP?
     /// when both are disabled, OWP are ignored from collisions.
     /// </summary>
-    public bool oneWayPlatformsAreWalls = true;
+    public bool oneWayPlatformsAreWalls = false;
 
     /// <summary>
     /// The layer that contains moving platforms. If there are no moving platforms then make sure this has no layers (value of 0).
