@@ -4,18 +4,16 @@ using UnityEngine;
 
 namespace MYGLOBAL
 {
-    public class MyGlobal : MonoBehaviour
+    public class MyInput
     {
-        public class Input
-        {
-            // 인풋매니져에 지정해둔 이름 지정
-            public const string BUTTON_HORIZONTAL_MOVE = "Horizontal";
-            public const string BUTTON_VERTICAL_MOVE = "Vertical";
-            public const string BUTTON_JUMP = "Jump";
-            public const string BUTTON_DASH = "Fire1";
-        }
+        // 지정버튼 바꿔도 코드 바꿀 필요 없도록 인풋매니져에 지정해둔 이름 지정
+        public const string BUTTON_HORIZONTAL_MOVE = "Horizontal";
+        public const string BUTTON_VERTICAL_MOVE = "Vertical";
+        public const string BUTTON_JUMP = "Jump";
+        public const string BUTTON_DASH = "Fire1";
     }
 
+    /*
     public class MyGlobals
     {
         public const string PACKAGE_NAME = "MYGLOBAL";
@@ -33,6 +31,7 @@ namespace MYGLOBAL
             return Mathf.CeilToInt(frames);
         }
     }
+    */
 }
 
 
