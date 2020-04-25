@@ -409,7 +409,5 @@ public class MyPlayerEngine : MonoBehaviour
         boundMin.y += surfacingCheckerDist;
         Gizmos.DrawWireCube(new Vector2((boundMin.x + boundMax.x) / 2, (boundMin.y + boundMax.y) / 2),
             new Vector2(boundMax.x - boundMin.x, boundMin.y - boundMax.y));
-
-
     }
 }
