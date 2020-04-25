@@ -16,7 +16,7 @@ public class MyPlayerEngine : MonoBehaviour
     public float CheckerDist = 1;
 
     // ? 딱 붙었을때 장애물과 떨어져 있을 거리 ?
-    public float distFromObstacle = 0.1f;
+    private const float distFromObstacle = 1f; // 왜 cons 해야하지?
     //-------------------------------------------------------
     // 땅 가속도 변수
     public float groundAccel = 100;
@@ -188,6 +188,7 @@ public class MyPlayerEngine : MonoBehaviour
         // 아래 범위는 늘려야함
         boundMin.y -= distFromObstacle;
         
+
         // 그 범위안에 다른 콜라이더가 있는지 체크
         Collider2D hit = Physics2D.OverlapArea(boundMin, boundMax, CheckerMask);
         if (hit != null)
