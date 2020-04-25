@@ -7,9 +7,6 @@ using UnityEngine.EventSystems;
 public class MyPlayerEngine : MonoBehaviour
 {
     #region 퍼블릭 변수들
-    // 디버그용 기즈모들 그릴건가 불리언
-    public bool drawDebugGizmo = true;
-    //-------------------------------------------------------
     // 체크할 레이어들 마스크(목록)
     public LayerMask CheckerMask;
     // ? 레이캐스트 체크 거리 ?
@@ -373,7 +370,8 @@ public class MyPlayerEngine : MonoBehaviour
         }
     }
     #endregion
-
+    //=======================================================
+    #region 디버그 메소드
     // #### 디버그 ####
     private void OnDrawGizmos()
     {
@@ -409,7 +407,6 @@ public class MyPlayerEngine : MonoBehaviour
         boundMin.y += surfacingCheckerDist;
         Gizmos.DrawWireCube(new Vector2((boundMin.x + boundMax.x) / 2, (boundMin.y + boundMax.y) / 2),
             new Vector2(boundMax.x - boundMin.x, boundMin.y - boundMax.y));
-
-
     }
+    #endregion
 }
