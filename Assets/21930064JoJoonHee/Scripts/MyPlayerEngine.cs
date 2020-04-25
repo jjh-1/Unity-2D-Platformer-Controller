@@ -6,6 +6,7 @@ using UnityEngine.EventSystems;
 [RequireComponent(typeof(Rigidbody2D))]
 public class MyPlayerEngine : MonoBehaviour
 {
+    #region 퍼블릭 변수들
     // 디버그용 기즈모들 그릴건가 불리언
     public bool drawDebugGizmo = true;
     //-------------------------------------------------------
@@ -64,12 +65,13 @@ public class MyPlayerEngine : MonoBehaviour
     ///public bool ChangeLayerDuringDash = false;
     ///public int DashLayer = 0;
     /// </summary>
-
+    #endregion
     //=======================================================
-
+    #region 퍼블릭 이넘들
     // FSM용 이넘 (개인적인 명확성 위해 문법무시) 
     public enum EngineState
     {
+        None,
         Grounding,
         // @변경-아래두개로 세분화@
         //InAir, 
@@ -79,7 +81,7 @@ public class MyPlayerEngine : MonoBehaviour
         Cornering,
         Dashing
     }
-    private EngineState engineState;
+    private EngineState engineState = EngineState.None;
     //-------------------------------------------------------
     // 주변 맞닿은 상황용 이넘 (역시 문법무시)
     public enum Surfacing
@@ -89,21 +91,19 @@ public class MyPlayerEngine : MonoBehaviour
         LeftWall,
         RightWall
     }
-    private Surfacing surfacing;
-
+    private Surfacing surfacing = Surfacing.None;
+    #endregion
     //=======================================================
-
-
-    
+    #region 프라이빗 변수들
     // !!!! Time.time 은 해당 프레임이 시작된 시간 유니티 변순데 여기에 대쉬 쿨타임 더하면 다음 대쉬 가능한 시간 
     private float dashCanAgainTime = 0;
     // Time.time 에 dashDuration 더해져 지정될 변수 (대쉬 끝나는 시간)
     private float dashEndTime = 0;
     // 대쉬 벡터
-    private Vector2 dashVector = Vector2.zero;
-
+    private Vector2 dashingVector = Vector2.zero;
+    #endregion
     //=======================================================
-
+    #region 퍼블릭 메소드들, 관련변수
     // 방향 벡터 셋 메소드
     private Vector2 moveDir;
     public void SetMoveDir(Vector2 moveDir)
@@ -165,8 +165,9 @@ public class MyPlayerEngine : MonoBehaviour
     {
         return engineState;
     }
-
+    #endregion
     //=======================================================
+    #region 모노비헤비어 메소드들, 유니티 인스턴스, 관련 변수들
     // 리지드바디 인스턴스 지정, 관련변수 저장
     private Rigidbody2D rigidbody;
     private float initialDrag;
@@ -185,7 +186,7 @@ public class MyPlayerEngine : MonoBehaviour
         SetIsFacingRight();
 
         // @@@@ 대쉬 버튼 누른순간의 첫 한번 세팅
-        if(canDash
+        if (canDash
             &&
             isDashButtonPressed
             &&
@@ -204,11 +205,11 @@ public class MyPlayerEngine : MonoBehaviour
             // 대쉬 벡터 지정
             if (isFacingRight)
             {
-                dashVector = Vector2.right * dashSpd;
+                dashingVector = Vector2.right * dashSpd;
             }
             else
             {
-                dashVector = Vector2.left * dashSpd;
+                dashingVector = Vector2.left * dashSpd;
             }
         }
         isDashButtonPressed = false;
@@ -216,9 +217,27 @@ public class MyPlayerEngine : MonoBehaviour
         // @@@@ 실제 대쉬 수행. 대쉬는 모든 조건 무시하는 최상위 상태
         if (engineState == EngineState.Dashing)
         {
+            rigidbody.velocity = dashingVector;
+
+            // 대쉬 첫세팅에서 정한 대쉬 끝나는 시간 넘음 - 대쉬종료
+            if (Time.time >= dashEndTime)
+            {
+                // 원래상태, 원래 리지드바디 변수들로
+                engineState = EngineState.None;
+                rigidbody.gravityScale = initialGrav;
+                // ? 공중에서 드래그 따로하나 ?
+                if (surfacing == Surfacing.Ground)
+                {
+                    rigidbody.drag = initialDrag;
+                }
+            }
 
         }
+        // @@@@ 대쉬 외 상태들
+        else
+        {
 
-
+        }
     }
+    #endregion
 }
