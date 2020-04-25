@@ -15,8 +15,8 @@ public class MyPlayerEngine : MonoBehaviour
     // ? 레이캐스트 체크 거리 ?
     public float CheckerDist = 1;
 
-    // ? 딱 붙었을때 장애물과 떨어져 있을 거리 ?
-    private const float distFromObstacle = 1f; // 왜 cons 해야하지?
+    // 서페이싱 체크 거리
+    public float surfacingCheckerDist = 0.5f; 
     //-------------------------------------------------------
     // 땅 가속도 변수
     public float groundAccel = 100;
@@ -174,7 +174,6 @@ public class MyPlayerEngine : MonoBehaviour
     // @@@@ 맞닿은것 정보 가져오는 메소드
     private void setSurfacing()
     {
-
         // 움직이니 계속 업데이트 해야하니 여기서 선언, 인스턴스지정, 정보 계속 가져와야함
         Bounds bound = GetComponent<BoxCollider2D>().bounds;
         Vector2 boundMax = bound.max;
@@ -182,13 +181,12 @@ public class MyPlayerEngine : MonoBehaviour
 
         // @1@ 땅 먼저 (땅만) 체크
         // 좌,우, 위는 필요없으니 범위 줄임
-        boundMax.x -= distFromObstacle;
-        boundMin.x += distFromObstacle;
-        boundMax.y -= distFromObstacle;
+        boundMax.x -= surfacingCheckerDist;
+        boundMin.x += surfacingCheckerDist;
+        boundMax.y -= surfacingCheckerDist;
         // 아래 범위는 늘려야함
-        boundMin.y -= distFromObstacle;
+        boundMin.y -= surfacingCheckerDist;
         
-
         // 그 범위안에 다른 콜라이더가 있는지 체크
         Collider2D hit = Physics2D.OverlapArea(boundMin, boundMax, CheckerMask);
         if (hit != null)
@@ -210,10 +208,10 @@ public class MyPlayerEngine : MonoBehaviour
             {
                 boundMax = bound.max;
                 boundMin = bound.min;
-                boundMax.x += distFromObstacle; // 이거만 늘리고 다른건 다 줄여서 바운드 오른쪽만 체크
-                boundMin.x += distFromObstacle;
-                boundMax.y -= distFromObstacle;
-                boundMin.y += distFromObstacle;
+                boundMax.x += surfacingCheckerDist; // 이거만 늘리고 다른건 다 줄여서 바운드 오른쪽만 체크
+                boundMin.x += surfacingCheckerDist;
+                boundMax.y -= surfacingCheckerDist;
+                boundMin.y += surfacingCheckerDist;
 
                 hit = Physics2D.OverlapArea(boundMin, boundMax, CheckerMask);
                 if (hit != null)
@@ -226,10 +224,10 @@ public class MyPlayerEngine : MonoBehaviour
             {
                 boundMax = bound.max;
                 boundMin = bound.min;
-                boundMax.x -= distFromObstacle; 
-                boundMin.x -= distFromObstacle; // 이거만 늘리고 다른건 다 줄여서 바운드 왼쪽만 체크
-                boundMax.y -= distFromObstacle;
-                boundMin.y += distFromObstacle;
+                boundMax.x -= surfacingCheckerDist; 
+                boundMin.x -= surfacingCheckerDist; // 이거만 늘리고 다른건 다 줄여서 바운드 왼쪽만 체크
+                boundMax.y -= surfacingCheckerDist;
+                boundMin.y += surfacingCheckerDist;
 
                 hit = Physics2D.OverlapArea(boundMin, boundMax, CheckerMask);
                 if (hit != null)
@@ -379,17 +377,39 @@ public class MyPlayerEngine : MonoBehaviour
     // #### 디버그 ####
     private void OnDrawGizmos()
     {
+        // 서페이싱 체커
         Bounds bound = GetComponent<BoxCollider2D>().bounds;
         Vector2 boundMax = bound.max;
         Vector2 boundMin = bound.min;
-        // @1@ 땅 먼저 (땅만) 체크
-        // 좌,우, 위는 필요없으니 범위 줄임
-        boundMax.x -= distFromObstacle;
-        boundMin.x += distFromObstacle;
-        boundMax.y -= distFromObstacle;
-        // 아래 범위는 늘려야함
-        boundMin.y -= distFromObstacle;
-        // #### 디버그용 ####
-        Gizmos.DrawWireCube(new Vector2((boundMin.x+boundMax.x)/2,(boundMin.y+boundMax.y)/2),new Vector2(boundMax.x - boundMin.x, boundMin.y - boundMax.y));
+        // 아래
+        boundMax.x -= surfacingCheckerDist;
+        boundMin.x += surfacingCheckerDist;
+        boundMax.y -= surfacingCheckerDist;
+        boundMin.y -= surfacingCheckerDist;
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawWireCube(new Vector2((boundMin.x + boundMax.x) / 2, (boundMin.y + boundMax.y) / 2), 
+            new Vector2(boundMax.x - boundMin.x, boundMin.y - boundMax.y));
+        boundMax = bound.max;
+        boundMin = bound.min;
+        // 오른쪽
+        boundMax.x += surfacingCheckerDist;
+        boundMin.x += surfacingCheckerDist;
+        boundMax.y -= surfacingCheckerDist;
+        boundMin.y += surfacingCheckerDist;
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireCube(new Vector2((boundMin.x + boundMax.x) / 2, (boundMin.y + boundMax.y) / 2), 
+            new Vector2(boundMax.x - boundMin.x, boundMin.y - boundMax.y));
+        boundMax = bound.max;
+        boundMin = bound.min;
+        //왼쪽 
+        Gizmos.color = Color.blue;
+        boundMax.x -= surfacingCheckerDist;
+        boundMin.x -= surfacingCheckerDist;
+        boundMax.y -= surfacingCheckerDist;
+        boundMin.y += surfacingCheckerDist;
+        Gizmos.DrawWireCube(new Vector2((boundMin.x + boundMax.x) / 2, (boundMin.y + boundMax.y) / 2),
+            new Vector2(boundMax.x - boundMin.x, boundMin.y - boundMax.y));
+
+
     }
 }
