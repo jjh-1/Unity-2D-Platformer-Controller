@@ -78,7 +78,7 @@ public class MyPlayerEngine : MonoBehaviour
         Grounding,
         // @변경-아래두개로 세분화@
         //InAir, 
-        Jumping,
+        Ascending,
         Falling,
         Walling,
         Cornering,
@@ -151,9 +151,10 @@ public class MyPlayerEngine : MonoBehaviour
     */
     //-------------------------------------------------------
     // 점프한 순간의 도약 시작 상태셋팅 메소드
+    private bool isJumpButtonPressed = false;
     public void Jump()
     {
-        engineState = EngineState.Jumping;
+        isJumpButtonPressed = true;
     }
     //-------------------------------------------------------
     // @변경@ 점프 버튼 떼면 상승 멈추게 할 상태셋팅 메소드
@@ -173,6 +174,7 @@ public class MyPlayerEngine : MonoBehaviour
     // @@@@ 맞닿은것 정보 가져오는 메소드
     private void setSurfacing()
     {
+
         // 움직이니 계속 업데이트 해야하니 여기서 선언, 인스턴스지정, 정보 계속 가져와야함
         Bounds bound = GetComponent<BoxCollider2D>().bounds;
         Vector2 boundMax = bound.max;
@@ -191,10 +193,12 @@ public class MyPlayerEngine : MonoBehaviour
         if (hit != null)
         {
             surfacing = Surfacing.Ground;
+            print("땅부딫힘");
         }
         else
         {
             surfacing = Surfacing.None;
+            print("xxxxxxxxx");
         }
 
         // @2@ 벽타기 기능 위해 땅위는 아니고 오른쪽이나 왼쪽에 벽이있나 체크
@@ -257,7 +261,7 @@ public class MyPlayerEngine : MonoBehaviour
     {
         SetIsFacingRight();
 
-        // @@@@ 대쉬 버튼 누른순간의 첫 한번 세팅
+        // @@@@ [대쉬 버튼 누른순간의 첫 한번 세팅]
         if (canDash
             &&
             isDashButtonPressed
@@ -286,7 +290,7 @@ public class MyPlayerEngine : MonoBehaviour
         }
         isDashButtonPressed = false;
 
-        // @@@@ 실제 대쉬 수행. 대쉬는 모든 조건 무시하는 최상위 상태
+        // @@@@ [실제 대쉬 수행]. 대쉬는 모든 조건 무시하는 최상위 상태
         if (engineState == EngineState.Dashing)
         {
             rigidbody.velocity = dashingVector;
@@ -305,11 +309,86 @@ public class MyPlayerEngine : MonoBehaviour
             }
 
         }
-        // @@@@ 대쉬 외 상태들
+        // 대쉬 외 상태들
         else
         {
+            setSurfacing();
 
+            /*
+            // !?!? 리지드바디 계속 업데이트 해야하나? 좀되서 기억안나네
+            if ((surfacing != Surfacing.None) && (rigidbody.velocity.y < 0))
+            {
+                // 이즈 점핑 펄스
+            }
+            */
+
+            // @@@@ [상태 셋팅]
+            if (surfacing == Surfacing.Ground)
+            {
+                engineState = EngineState.Grounding;
+                rigidbody.gravityScale = 0;
+            }
+            else
+            {
+                if (rigidbody.velocity.y > 0)
+                {
+                    engineState = EngineState.Ascending;
+                }
+                else if (rigidbody.velocity.y < 0)
+                {
+                    engineState = EngineState.Falling;
+                }
+                // 벨로시티가 0인데 땅위도 아니라면 벽에 붙었단거겠지.
+            }
+
+            // _IgnoreMovementUntil 변수로 구석에 있는상태에서 점프하면 수평이동 못하게 하는거 같음
+            // @@@@ [좌우 이동]
+            // 땅위인 경우
+            if (surfacing == Surfacing.Ground)
+            {
+                rigidbody.drag = initialDrag; // ? 힘안가할때의 프레임당 감소치 였던가 ?
+                rigidbody.AddForce(moveDir * groundAccel);
+            }
+            // 공중인 경우
+            else
+            {
+                rigidbody.drag = 0;
+
+                // 좌우가 비었거나 벽에 붙은상태인데 그 벽쪽으로 갈려는게 아닐때만 공중 이동
+                if (((moveDir.x > 0) && (surfacing == Surfacing.LeftWall))
+                    ||
+                    ((moveDir.x < 0) && (surfacing == Surfacing.RightWall))
+                    ||
+                    surfacing == Surfacing.None)
+                {
+                    rigidbody.AddForce(moveDir * airAccel);
+                }
+            }
+
+
+            //점프
+            if (isJumpButtonPressed)
+            {
+
+            }
         }
     }
     #endregion
+
+    // #### 디버그 ####
+    private void OnDrawGizmos()
+    {
+        Bounds bound = GetComponent<BoxCollider2D>().bounds;
+        Vector2 boundMax = bound.max;
+        Vector2 boundMin = bound.min;
+        // @1@ 땅 먼저 (땅만) 체크
+        // 좌,우, 위는 필요없으니 범위 줄임
+        boundMax.x -= distFromObstacle;
+        boundMin.x += distFromObstacle;
+        boundMax.y -= distFromObstacle;
+        // 아래 범위는 늘려야함
+        boundMin.y -= distFromObstacle;
+        // #### 디버그용 ####
+        Gizmos.DrawWireCube(new Vector2((boundMin.x+boundMax.x)/2,(boundMin.y+boundMax.y)/2),new Vector2(boundMax.x - boundMin.x, boundMin.y - boundMax.y));
+    }
 }
