@@ -14,6 +14,9 @@ public class MyPlayerEngine : MonoBehaviour
     public LayerMask CheckerMask;
     // ? 레이캐스트 체크 거리 ?
     public float CheckerDist = 1;
+
+    // ? 딱 붙었을때 장애물과 떨어져 있을 거리 ?
+    public float distFromObstacle = 0.1f;
     //-------------------------------------------------------
     // 땅 가속도 변수
     public float groundAccel = 100;
@@ -158,7 +161,6 @@ public class MyPlayerEngine : MonoBehaviour
     {
         engineState = EngineState.Falling;
     }
-
     //-------------------------------------------------------
     // 애니메이션 스크립트에 상태 넘겨줄 메소드 (상태 보호)
     public EngineState GetEngineState()
@@ -167,17 +169,87 @@ public class MyPlayerEngine : MonoBehaviour
     }
     #endregion
     //=======================================================
+    #region 프라이빗 메소드들
+    // @@@@ 맞닿은것 정보 가져오는 메소드
+    private void setSurfacing()
+    {
+        // 움직이니 계속 업데이트 해야하니 여기서 선언, 인스턴스지정, 정보 계속 가져와야함
+        Bounds bound = GetComponent<BoxCollider2D>().bounds;
+        Vector2 boundMax = bound.max;
+        Vector2 boundMin = bound.min;
+
+        // @1@ 땅 먼저 (땅만) 체크
+        // 좌,우, 위는 필요없으니 범위 줄임
+        boundMax.x -= distFromObstacle;
+        boundMin.x += distFromObstacle;
+        boundMax.y -= distFromObstacle;
+        // 아래 범위는 늘려야함
+        boundMin.y -= distFromObstacle;
+        
+        // 그 범위안에 다른 콜라이더가 있는지 체크
+        Collider2D hit = Physics2D.OverlapArea(boundMin, boundMax, CheckerMask);
+        if (hit != null)
+        {
+            surfacing = Surfacing.Ground;
+        }
+        else
+        {
+            surfacing = Surfacing.None;
+        }
+
+        // @2@ 벽타기 기능 위해 땅위는 아니고 오른쪽이나 왼쪽에 벽이있나 체크
+        if (surfacing == Surfacing.None)
+        {
+            // 오른쪽벽 체크
+            if (moveDir.x > 0)
+            {
+                boundMax = bound.max;
+                boundMin = bound.min;
+                boundMax.x += distFromObstacle; // 이거만 늘리고 다른건 다 줄여서 바운드 오른쪽만 체크
+                boundMin.x += distFromObstacle;
+                boundMax.y -= distFromObstacle;
+                boundMin.y += distFromObstacle;
+
+                hit = Physics2D.OverlapArea(boundMin, boundMax, CheckerMask);
+                if (hit != null)
+                {
+                    surfacing = Surfacing.RightWall;
+                }
+            }
+            // 왼쪽벽 체크
+            else if(moveDir.x < 0) 
+            {
+                boundMax = bound.max;
+                boundMin = bound.min;
+                boundMax.x -= distFromObstacle; 
+                boundMin.x -= distFromObstacle; // 이거만 늘리고 다른건 다 줄여서 바운드 왼쪽만 체크
+                boundMax.y -= distFromObstacle;
+                boundMin.y += distFromObstacle;
+
+                hit = Physics2D.OverlapArea(boundMin, boundMax, CheckerMask);
+                if (hit != null)
+                {
+                    surfacing = Surfacing.LeftWall;
+                }
+            }
+        }
+    }
+    #endregion
+    //=======================================================
     #region 모노비헤비어 메소드들, 유니티 인스턴스, 관련 변수들
-    // 리지드바디 인스턴스 지정, 관련변수 저장
+    // 리지드바디 인스턴스 지정, 관련변수
     private Rigidbody2D rigidbody;
     private float initialDrag;
     private float initialGrav;
+
     // Start is called before the first frame update
     void Start()
     {
+        // 리지드바디 관련 이닛
         rigidbody = GetComponent<Rigidbody2D>();
         initialDrag = rigidbody.drag;
         initialGrav = rigidbody.gravityScale;
+
     }
     //-------------------------------------------------------
     // Update is called once per frame
