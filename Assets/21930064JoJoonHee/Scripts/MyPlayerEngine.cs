@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
+[RequireComponent(typeof(Rigidbody2D))]
 public class MyPlayerEngine : MonoBehaviour
 {
     // 디버그용 기즈모들 그릴건가 불리언
@@ -27,6 +29,10 @@ public class MyPlayerEngine : MonoBehaviour
     //-------------------------------------------------------
     // 점프 높이 변수
     public float jumpHght = 16;
+    /// <summary>
+    /// @변경:노필요-점프버튼 떼면 멈추게 할것@ 홀드 점프 변수
+    ///public float ExtraJumpHeight = 0.5f; 
+    /// </summary>
     // 더블점프 불리언
     public bool canDoubleJump = true;
     //-------------------------------------------------------
@@ -36,6 +42,13 @@ public class MyPlayerEngine : MonoBehaviour
     public bool willWallSilde = false;
     // 벽 점프 불리언
     public bool canWallJump = true;
+
+    /// <summary>
+    /// @변경:노필요-벽에 붙었을때 안미끄러지게 할수 있게 할건데 스펠렁키 같은 게임 만들거 아닌이상 필요없을거 같음@ 절벽 모서리 잡기 관련 변수들
+    ///public bool AllowCornerGrab = false;
+    ///public float CornerHeightCheck = 0.1f;
+    ///public float CornerWidthCheck = 0.1f;
+    /// </summary>
     //-------------------------------------------------------
     // 대쉬 불리언
     public bool canDash = true;
@@ -46,12 +59,20 @@ public class MyPlayerEngine : MonoBehaviour
     // 대쉬 지속시간 변수
     public float dashDuration = 0.2f;
 
+    /// <summary> 
+    /// @변경:맘에안듬-대쉬시 충돌오류 안나게 꼼수 쓸려는거 같은데 나중에 테스트후 고치지뭐
+    ///public bool ChangeLayerDuringDash = false;
+    ///public int DashLayer = 0;
+    /// </summary>
+
     //=======================================================
 
     // FSM용 이넘 (개인적인 명확성 위해 문법무시) 
     public enum EngineState
     {
         Grounding,
+        // @변경-아래두개로 세분화@
+        //InAir, 
         Jumping,
         Falling,
         Walling,
@@ -73,15 +94,58 @@ public class MyPlayerEngine : MonoBehaviour
     //=======================================================
 
 
+    
+    // !!!! Time.time 은 해당 프레임이 시작된 시간 유니티 변순데 여기에 대쉬 쿨타임 더하면 다음 대쉬 가능한 시간 
+    private float dashCanAgainTime = 0;
+    // Time.time 에 dashDuration 더해져 지정될 변수 (대쉬 끝나는 시간)
+    private float dashEndTime = 0;
+    // 대쉬 벡터
+    private Vector2 dashVector = Vector2.zero;
 
     //=======================================================
 
-    // 방향 벡터 변수 셋 메소드
+    // 방향 벡터 셋 메소드
     private Vector2 moveDir;
     public void SetMoveDir(Vector2 moveDir)
     {
         this.moveDir = moveDir;
     }
+    //-------------------------------------------------------
+    // 바라보는 방향 겟,셋 메소드
+    // !!!! 안움직이는 상황이면 바뀌지 않으니(else if) 보고있는 방향 적절히 셋됨 !!!!
+    private bool isFacingRight = true;
+    public void SetIsFacingRight()
+    {
+        if (moveDir.x > 0)
+        {
+            isFacingRight = true;
+        }
+        else if (moveDir.x < 0)
+        {
+            isFacingRight = false;
+        }    
+    }
+    // 이건 애니메이션 스크립트에서 사용할 메소드 (보호)
+    public bool GetIsFacingRight()
+    {
+        return isFacingRight;
+    }
+    //-------------------------------------------------------
+    // 컨트롤러 스크립트에서(거기선 퍼포먼스 더좋은 그냥 업데이트 사용, 실제 움직이는 엔진 여기선 픽스드 업데이트 사용) 이 메소드 콜해서 대쉬 버튼 눌렀나
+    private bool isDashButtonPressed = false;
+    public void Dash()
+    {      
+        isDashButtonPressed = true;
+    }
+    /*
+    // ? 좌우 이동중 대쉬 했을때 사용할 오버로딩 메소드 ?
+    private bool isDashingWhileMoving = false;
+    public void Dash(Vector2 dir)
+    {
+        isDashButtonPressed = true;
+        isDashingWhileMoving = false;
+    }
+    */
     //-------------------------------------------------------
     // 점프한 순간의 도약 시작 상태셋팅 메소드
     public void Jump()
@@ -94,33 +158,67 @@ public class MyPlayerEngine : MonoBehaviour
     {
         engineState = EngineState.Falling;
     }
-    //-------------------------------------------------------
-    // 버튼 누르면 대쉬하는 대쉬 상태셋팅 메소드
-    public void Dash()
-    {
-        engineState = EngineState.Dashing;
-    }
+
     //-------------------------------------------------------
     // 애니메이션 스크립트에 상태 넘겨줄 메소드 (상태 보호)
     public EngineState GetEngineState()
     {
         return engineState;
     }
-    // 애니메이션 스크립트에 방향 넘겨줄 메소드 (상태 보호)
-    public bool IsFacingRight()
-    {
-        return moveDir.x > 0 ? true : false;
-    }
 
+    //=======================================================
+    // 리지드바디 인스턴스 지정, 관련변수 저장
+    private Rigidbody2D rigidbody;
+    private float initialDrag;
+    private float initialGrav;
     // Start is called before the first frame update
     void Start()
     {
-        
+        rigidbody = GetComponent<Rigidbody2D>();
+        initialDrag = rigidbody.drag;
+        initialGrav = rigidbody.gravityScale;
     }
-
+    //-------------------------------------------------------
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        
+        SetIsFacingRight();
+
+        // @@@@ 대쉬 버튼 누른순간의 첫 한번 세팅
+        if(canDash
+            &&
+            isDashButtonPressed
+            &&
+            (Time.time >= dashCanAgainTime))
+        {
+            // !!!! Time.time 은 해당 프레임이 시작된 시간 유니티 변순데 여기에 대쉬 쿨타임 더하면 다음 대쉬 가능한 시간 셋
+            dashCanAgainTime = Time.time + dashCoolTime;
+            // 대쉬 끝나는 시간 셋
+            dashEndTime = Time.time + dashDuration;
+
+            // 대쉬 상태 셋
+            rigidbody.drag = 0;
+            rigidbody.gravityScale = 0;
+            engineState = EngineState.Dashing;
+
+            // 대쉬 벡터 지정
+            if (isFacingRight)
+            {
+                dashVector = Vector2.right * dashSpd;
+            }
+            else
+            {
+                dashVector = Vector2.left * dashSpd;
+            }
+        }
+        isDashButtonPressed = false;
+
+        // @@@@ 실제 대쉬 수행. 대쉬는 모든 조건 무시하는 최상위 상태
+        if (engineState == EngineState.Dashing)
+        {
+
+        }
+
+
     }
 }
