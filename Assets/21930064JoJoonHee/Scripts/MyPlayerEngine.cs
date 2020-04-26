@@ -12,6 +12,15 @@ public class MyPlayerEngine : MonoBehaviour
     // X축 인풋
     public float inputX;
 
+    // 땅위에서의 속도
+    public float groundSpd;
+    // 가던방향 바꾸거나 속도 0에서 groundSpd 까지 도달하는데 걸리는 시간
+    public float groundSpdReachTime;
+    // 가다 멈췄을때 관성으로 미끄러지게할 거리
+    public float groundStopDist;
+
+    //-------------------------------------------------------
+
     // 벨로시티
     public Vector2 velocity;
 
@@ -20,16 +29,6 @@ public class MyPlayerEngine : MonoBehaviour
     #endregion
     //=======================================================
     #region 프라이빗 메소드들, 프라이빗 변수들
-    //-------------------------------------------------------
-    // @@@@ 2. @@@@
-    private void MoveEngine()
-    {
-        Vector2 currPos = collider2D.bounds.center;
-        Vector2 targetPos = (Vector2)collider2D.bounds.center + (velocity * currDeltaTime);
-    }
-    //-------------------------------------------------------
-
-    //-------------------------------------------------------
     // 바라보는 방향 지정 메소드
     private void SetFacing()
     {
@@ -44,17 +43,136 @@ public class MyPlayerEngine : MonoBehaviour
         // 0은 인풋 없는것이니 안바꾸고 방향 그대로 둬야함
     }
     //-------------------------------------------------------
+    // @@@@ 2. @@@@
+    private void MoveEngine()
+    {
+        Vector2 currPos = collider2D.bounds.center;
+        Vector2 targetPos = (Vector2)collider2D.bounds.center + (velocity * currDeltaTime);
+    }
+    //-------------------------------------------------------
+    // 벨로시티 가속 메소드
+    private float Accelerate (float velocity, float accel, float target)
+    {
+        // ! accel 은 음수 양수 둘다 될수있음. 사용시 주의 !
+        velocity += accel * deltaTime;
+
+        if ((velocity > 0) && (velocity > target)
+            ||
+            (velocity < 0) && (velocity < target))
+        {
+            velocity = target;
+        }
+  
+        return velocity;
+    }
+    // 벨로시티 감속 메소드
+    private float Decelerate (float velocity, float decel, float target)
+    {
+        // decel 은 무조건 양수값
+
+        if (velocity > 0)
+        {
+            velocity -= decel * deltaTime;
+
+            if (velocity < target)
+            {
+                velocity = target;
+            }
+        }
+        else if(velocity < 0)
+        {
+            velocity += decel * deltaTime;
+
+            if (velocity > target)
+            {
+                velocity = target;
+            }
+        }
+
+        return velocity;
+    }
+    //-------------------------------------------------------
+    // @@@@ 1-a. @@@@
+    private void ApplyMovement()
+    {
+        // 원본 : GetSpeedAndMaxSpeedOnGround 메소드로 out으로 지정할것
+        float targetSpd = groundSpd;
+
+        // @ x축이동 인풋이 들어왔다면 가속
+        if (Mathf.Abs(inputX) > 0)
+        {
+            // ~+ if 상태가 땅이면
+            // 원본 : GetSpeedAndMaxSpeedOnGround(out speed, out maxSpeed); 여기서 speed 는 velocity, maxSpeed 는 그라운드 스피드 같은거
+            
+            // 서서히 가속하게 할려한다면
+            if(groundSpdReachTime > 0)
+            {       
+                // ! 가속전 일단 감속이 필요한 경우
+                    // 오른쪽으로 가고있고 && 인풋(1)도 오른쪽인데 && 현재 벨로시티가 목표 스피드보다 빠른경우 (오른쪽으로가니 더큰경우)
+                if (((velocity.x > 0) && (inputX > 0) && (velocity.x > (inputX * targetSpd)))
+                    ||
+                    // 왼쪽으로 가고있고 && 인풋(-1)도 왼쪽인데 && 현재 벨로시티가 목표 스피드보다 빠른경우 (왼쪽으로 가는거니 더 작은경우)
+                    ((velocity.x < 0) && (inputX < 0) && (velocity.x < (inputX * targetSpd)))
+                    ||
+                    // 가던중 반대방향키 눌렀을때
+                    ((velocity.x < 0) && (inputX > 0))
+                    ||
+                    ((velocity.x > 0) && (inputX < 0)))
+                {
+                    // 감속수치 계산
+                    float decel = (targetSpd * targetSpd) / (2 * groundStopDist);
+
+                    velocity.x = Decelerate(velocity.x, decel, inputX * targetSpd);
+                }
+                // 가속
+                else
+                {
+                    // 가속수치 계산
+                    float accel = inputX * (targetSpd / groundSpdReachTime);
+
+                    velocity.x = Accelerate(velocity.x, accel, inputX * targetSpd);
+                }
+            }
+            // 그냥 바로바로 정한 스피드대로 움직이게 할려면
+            else
+            {
+                // 그냥 바로 덮어씌움
+                velocity.x = inputX * targetSpd; 
+            }
+        }
+        // @ x축이동 인풋이 없다면 감속
+        else if (velocity.x != 0)
+        {
+            // 원본 : GetSpeedAndMaxSpeedOnGround(out speed, out maxSpeed); 여기서 speed 는 velocity, maxSpeed 는 그라운드 스피드 같은거
+
+            // 일정거리 미끄러지게한후 멈출려할경우
+            if (groundStopDist > 0)
+            {
+                // 감속 수치 계산
+                float decel = (targetSpd * targetSpd) / (2 * groundStopDist);
+
+                velocity.x = Decelerate(velocity.x, decel, 0);
+            }
+            // 그냥 바로 멈추게 할려는 경우
+            else
+            {
+                velocity.x = 0;
+            }
+        }
+    }
+    //-------------------------------------------------------
     // @@@@ 1. (원본에선 스테이트 먼저 처리함) @@@@
     private void UpdateVelocity()
     {
         SetFacing();
 
+        ApplyMovement();
     }
     //-------------------------------------------------------
     // @@@@ 0. 픽스드 업데이트에서 콜될 최상위 메소드 @@@@
     private void UpdateEngine()
     {
-        // ▼원래 메소드 : UpdateVelocity();▼
+        UpdateVelocity();
     }
     #endregion
     //=======================================================
