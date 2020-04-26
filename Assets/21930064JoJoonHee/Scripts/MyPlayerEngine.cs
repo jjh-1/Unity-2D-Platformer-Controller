@@ -8,11 +8,11 @@ using UnityEngine.EventSystems;
 #endregion
 public class MyPlayerEngine : MonoBehaviour
 {
-    #region 퍼블릭 변수들
+    #region [퍼블릭 변수들]
     // X축 인풋
     public float inputX;
 
-    // 땅위에서의 속도
+    // 땅위에서의 속도 (초당 움직일 픽셀 수)
     public float groundSpd;
     // 가던방향 바꾸거나 속도 0에서 groundSpd 까지 도달하는데 걸리는 시간
     public float groundSpdReachTime;
@@ -28,7 +28,46 @@ public class MyPlayerEngine : MonoBehaviour
     public bool isFacingRight;
     #endregion
     //=======================================================
-    #region 프라이빗 메소드들, 프라이빗 변수들
+    #region [프라이빗 메소드들, 프라이빗 변수들]
+    #region @@@@ 2 @@@@  MoveEngine() 메소드와 그 하위 메소드들 - 오브젝트의 실제 포지션에 벨로시티 적용
+    // 실제 플레이어 오브젝트의 트랜스폼 이동 메소드
+    private Vector2 prevPos;
+    private void MovePosition(Vector2 newPos)
+    {
+        Vector2 currPos = collider2D.bounds.center;
+
+        // 새로받은 포지션과 지금 포지션이 같다면 메소드 끝
+        if (newPos == currPos)
+        {
+            prevPos = currPos;
+            return;
+        }
+        // 파라미터로 받은 위치가 현재위치와 다르다면
+
+        // 새 위치까지의 거리 계산
+        Vector2 toNewPos = newPos - currPos;
+        float distance = toNewPos.magnitude;
+
+        prevPos = currPos;
+
+        // RaycastHit2D hit = Get // #### 이동 먼저 구현 ####
+
+        transform.position = toTransfrom + newPos;
+    }
+    //-------------------------------------------------------
+    // @@@@ 2 @@@@ 오브젝트의 실제 포지션에 벨로시티 적용
+    private void MoveEngine()
+    {
+        /* ? 프레임당 다중체크 이터레이션용 변수인듯 ? 
+        Vector2 currPos = collider2D.bounds.center;
+        Vector2 targetPos = (Vector2)collider2D.bounds.center + (velocity * deltaTime);
+        */
+
+        MovePosition((Vector2)collider2D.bounds.center + (velocity * deltaTime));
+    }
+    #endregion
+    //-------------------------------------------------------
+    #region @@@@ 1 @@@@ UpdateVelocity() 메소드와 그 하위 메소드들 - 방향지정, 벨로시티에 감,가속치 추가
     // 바라보는 방향 지정 메소드
     private void SetFacing()
     {
@@ -41,13 +80,6 @@ public class MyPlayerEngine : MonoBehaviour
             isFacingRight = false;
         }
         // 0은 인풋 없는것이니 안바꾸고 방향 그대로 둬야함
-    }
-    //-------------------------------------------------------
-    // @@@@ 2. @@@@
-    private void MoveEngine()
-    {
-        Vector2 currPos = collider2D.bounds.center;
-        Vector2 targetPos = (Vector2)collider2D.bounds.center + (velocity * currDeltaTime);
     }
     //-------------------------------------------------------
     // 벨로시티 가속 메소드
@@ -92,7 +124,7 @@ public class MyPlayerEngine : MonoBehaviour
         return velocity;
     }
     //-------------------------------------------------------
-    // @@@@ 1-a. @@@@
+    // @@@@ 1-a @@@@
     private void ApplyMovement()
     {
         // 원본 : GetSpeedAndMaxSpeedOnGround 메소드로 out으로 지정할것
@@ -161,22 +193,36 @@ public class MyPlayerEngine : MonoBehaviour
         }
     }
     //-------------------------------------------------------
-    // @@@@ 1. (원본에선 스테이트 먼저 처리함) @@@@
+    // @@@@ 1 @@@@ 방향지정, 벨로시티에 감,가속치 추가 (원본에선 이거전에 스테이트 먼저 처리함)
     private void UpdateVelocity()
     {
         SetFacing();
 
         ApplyMovement();
     }
+    #endregion
     //-------------------------------------------------------
-    // @@@@ 0. 픽스드 업데이트에서 콜될 최상위 메소드 @@@@
+    // 앉기등 하면 콜라이더 크기 바뀌니 그런것들 업데이트 해주는 메소드
+    private Vector2 toTransfrom; // 박스콜라이더2D의 중심과 플레이어 오브젝트의 피봇간의 거리 저장해둘 변수
+    private void UpdateProperty()
+    {
+        toTransfrom = transform.position - collider2D.bounds.center;
+    }
+    //-------------------------------------------------------
+    // @@@@ 0 @@@@ 픽스드 업데이트에서 콜될 최상위 메소드
     private void UpdateEngine()
     {
+        UpdateProperty();
+
+        // @@@@ 1 @@@@
         UpdateVelocity();
+
+        // @@@@ 2 @@@@
+        MoveEngine();
     }
     #endregion
     //=======================================================
-    #region 모노비헤비어 메소드들, 유니티 인스턴스들
+    #region [모노비헤비어 메소드들, 유니티 인스턴스들]
     private Collider2D collider2D;
     private void Awake()
     {
