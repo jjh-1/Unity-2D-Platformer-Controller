@@ -1,29 +1,26 @@
 ﻿using MYGLOBAL;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(MyPlayerEngine))] // 반드시 해당 컴포넌트 연결하게
+[RequireComponent(typeof(MyPlayerEngine))] // 오브젝트가 반드시 해당 컴포넌트 가지고있게함
 public class MyPlayerControler : MonoBehaviour
 {
-    public bool canControl = true; // 최상위 전체 컨트롤 제어 불리언
-
     private MyPlayerEngine engine;
-
-    // Start is called before the first frame update
     void Start()
     {
-        engine = GetComponent<MyPlayerEngine>(); // 유니티 C# 스크립트 인스턴스 가져옴
+        engine = GetComponent<MyPlayerEngine>(); // 엔진과 상호작용 위해 유니티 C# 스크립트 인스턴스 가져옴
     }
 
-    // Update is called once per frame
+    // 키 입력은 프레임마다 정확할 필요 없으니 퍼포먼스 위해 컨트롤러 스크립트에서 그냥 업데이트에서 처리
     void Update()
     {
-        if (!canControl)
-        {
-            return; // 최상위 전체 컨트롤 제어 불리언
-        }
+        // X축 인풋 셋
+        engine.inputX = Input.GetAxis(MYGLOBAL.MyInput.BUTTON_HORIZONTAL_MOVE);
 
+        #region ~~~~
+        /*
         // [버튼에 의한 이동방향 지정]
         // 이동방향 변수. 누른 버튼이 오른쪽 화살표면 벡터 스트럭트 변수의 x값은 1, 왼쪽 화살표면 -1, 안움직이면 0
         Vector2 moveDir = new Vector2();
@@ -50,5 +47,7 @@ public class MyPlayerControler : MonoBehaviour
         {
             engine.Dash();
         }
+        */
+        #endregion
     }
 }

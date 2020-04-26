@@ -3,10 +3,84 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-[RequireComponent(typeof(Rigidbody2D))]
+#region ~~~~
+//[RequireComponent(typeof(Rigidbody2D))]
+#endregion
 public class MyPlayerEngine : MonoBehaviour
 {
     #region 퍼블릭 변수들
+    // X축 인풋
+    public float inputX;
+
+    // 벨로시티
+    public Vector2 velocity;
+
+    // 바라보는 방향
+    public bool isFacingRight;
+    #endregion
+    //=======================================================
+    #region 프라이빗 메소드들, 프라이빗 변수들
+    //-------------------------------------------------------
+    // @@@@ 2. @@@@
+    private void MoveEngine()
+    {
+        Vector2 currPos = collider2D.bounds.center;
+        Vector2 targetPos = (Vector2)collider2D.bounds.center + (velocity * currDeltaTime);
+    }
+    //-------------------------------------------------------
+
+    //-------------------------------------------------------
+    // 바라보는 방향 지정 메소드
+    private void SetFacing()
+    {
+        if (inputX > 0)
+        {
+            isFacingRight = true;
+        }
+        else if (inputX < 0)
+        {
+            isFacingRight = false;
+        }
+        // 0은 인풋 없는것이니 안바꾸고 방향 그대로 둬야함
+    }
+    //-------------------------------------------------------
+    // @@@@ 1. (원본에선 스테이트 먼저 처리함) @@@@
+    private void UpdateVelocity()
+    {
+        SetFacing();
+
+    }
+    //-------------------------------------------------------
+    // @@@@ 0. 픽스드 업데이트에서 콜될 최상위 메소드 @@@@
+    private void UpdateEngine()
+    {
+        // ▼원래 메소드 : UpdateVelocity();▼
+    }
+    #endregion
+    //=======================================================
+    #region 모노비헤비어 메소드들, 유니티 인스턴스들
+    private Collider2D collider2D;
+    private void Awake()
+    {
+        collider2D = GetComponent<Collider2D>();
+    }
+    //-------------------------------------------------------
+    // 델타타임 - 프레임마다 적용할게 아니라 실제 시간당 적용되도록 조정
+    private float deltaTime;
+    // 반드시 고정된 간격의 프레임당 업데이트
+    private void FixedUpdate()
+    {
+        // ~~~~ 원본은 퍼포먼스 희생하는 대신 더 정확히 업데이트하도록 실제이동 관련 메소드들이 델타타임 반환하고 몇번 순환할수 있게 하던데 일단난 필요없음
+        deltaTime = Time.fixedDeltaTime;
+
+        UpdateEngine();
+    }
+    #endregion
+    //=======================================================
+    #region ~~~~
+    /*
+    #region 퍼블릭 변수들
+
     // 디버그용 기즈모들 그릴건가 불리언
     public bool drawDebugGizmo = true;
     //-------------------------------------------------------
@@ -148,7 +222,7 @@ public class MyPlayerEngine : MonoBehaviour
         isDashButtonPressed = true;
         isDashingWhileMoving = false;
     }
-    */
+
     //-------------------------------------------------------
     // 점프한 순간의 도약 시작 상태셋팅 메소드
     private bool isJumpButtonPressed = false;
@@ -241,17 +315,19 @@ public class MyPlayerEngine : MonoBehaviour
     //=======================================================
     #region 모노비헤비어 메소드들, 유니티 인스턴스, 관련 변수들
     // 리지드바디 인스턴스 지정, 관련변수
-    private Rigidbody2D rigidbody;
+    //~~~~private Rigidbody2D rigidbody;
     private float initialDrag;
     private float initialGrav;
 
     // Start is called before the first frame update
     void Start()
     {
+        /*~~~~
         // 리지드바디 관련 이닛
         rigidbody = GetComponent<Rigidbody2D>();
         initialDrag = rigidbody.drag;
         initialGrav = rigidbody.gravityScale;
+        ~~~~
 
     }
     //-------------------------------------------------------
@@ -272,9 +348,11 @@ public class MyPlayerEngine : MonoBehaviour
             // 대쉬 끝나는 시간 셋
             dashEndTime = Time.time + dashDuration;
 
+            /*~~~~
             // 대쉬 상태 셋
             rigidbody.drag = 0;
             rigidbody.gravityScale = 0;
+            ~~~~
             engineState = EngineState.Dashing;
 
             // 대쉬 벡터 지정
@@ -292,18 +370,18 @@ public class MyPlayerEngine : MonoBehaviour
         // @@@@ [실제 대쉬 수행]. 대쉬는 모든 조건 무시하는 최상위 상태
         if (engineState == EngineState.Dashing)
         {
-            rigidbody.velocity = dashingVector;
+            //~~~~rigidbody.velocity = dashingVector;
 
             // 대쉬 첫세팅에서 정한 대쉬 끝나는 시간 넘음 - 대쉬종료
             if (Time.time >= dashEndTime)
             {
                 // 원래상태, 원래 리지드바디 변수들로
                 engineState = EngineState.None;
-                rigidbody.gravityScale = initialGrav;
+                //~~~~rigidbody.gravityScale = initialGrav;
                 // ? 공중에서 드래그 따로하나 ?
                 if (surfacing == Surfacing.Ground)
                 {
-                    rigidbody.drag = initialDrag;
+                    //~~~~rigidbody.drag = initialDrag;
                 }
             }
 
@@ -319,16 +397,17 @@ public class MyPlayerEngine : MonoBehaviour
             {
                 // 이즈 점핑 펄스
             }
-            */
+            
 
             // @@@@ [상태 셋팅]
             if (surfacing == Surfacing.Ground)
             {
                 engineState = EngineState.Grounding;
-                rigidbody.gravityScale = 0;
+                //~~~~rigidbody.gravityScale = 0;
             }
             else
             {
+                /*~~~~
                 if (rigidbody.velocity.y > 0)
                 {
                     engineState = EngineState.Ascending;
@@ -338,6 +417,7 @@ public class MyPlayerEngine : MonoBehaviour
                     engineState = EngineState.Falling;
                 }
                 // 벨로시티가 0인데 땅위도 아니라면 벽에 붙었단거겠지.
+                ~~~~
             }
 
             // _IgnoreMovementUntil 변수로 구석에 있는상태에서 점프하면 수평이동 못하게 하는거 같음
@@ -345,13 +425,15 @@ public class MyPlayerEngine : MonoBehaviour
             // 땅위인 경우
             if (surfacing == Surfacing.Ground)
             {
+                /*~~~~
                 rigidbody.drag = initialDrag; // ? 힘안가할때의 프레임당 감소치 였던가 ?
                 rigidbody.AddForce(moveDir * groundAccel);
+                ~~~~
             }
             // 공중인 경우
             else
             {
-                rigidbody.drag = 0;
+                //~~~~rigidbody.drag = 0;
 
                 // 좌우가 비었거나 벽에 붙은상태인데 그 벽쪽으로 갈려는게 아닐때만 공중 이동
                 if (((moveDir.x > 0) && (surfacing == Surfacing.LeftWall))
@@ -360,7 +442,7 @@ public class MyPlayerEngine : MonoBehaviour
                     ||
                     surfacing == Surfacing.None)
                 {
-                    rigidbody.AddForce(moveDir * airAccel);
+                    //~~~~rigidbody.AddForce(moveDir * airAccel);
                 }
             }
 
@@ -373,7 +455,8 @@ public class MyPlayerEngine : MonoBehaviour
         }
     }
     #endregion
-
+    //=======================================================
+    #region 디버그 메소드
     // #### 디버그 ####
     private void OnDrawGizmos()
     {
@@ -410,4 +493,7 @@ public class MyPlayerEngine : MonoBehaviour
         Gizmos.DrawWireCube(new Vector2((boundMin.x + boundMax.x) / 2, (boundMin.y + boundMax.y) / 2),
             new Vector2(boundMax.x - boundMin.x, boundMin.y - boundMax.y));
     }
+    #endregion
+    */
+    #endregion
 }
