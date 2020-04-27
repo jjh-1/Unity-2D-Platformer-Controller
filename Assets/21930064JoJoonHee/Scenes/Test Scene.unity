@@ -556,7 +556,7 @@ MonoBehaviour:
   inputX: 0
   groundSpd: 100
   groundSpdReachTime: 0.1
-  groundStopDist: 1
+  groundStopDist: 0.1
   velocity: {x: 0, y: 0}
   isFacingRight: 0
 --- !u!1001 &1581286418

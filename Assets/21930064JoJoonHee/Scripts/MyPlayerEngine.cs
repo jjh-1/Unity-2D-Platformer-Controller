@@ -11,19 +11,21 @@ public class MyPlayerEngine : MonoBehaviour
     #region [퍼블릭 변수들]
     // X축 인풋
     public float inputX;
-
+    //-------------------------------------------------------
     // 땅위에서의 속도 (초당 움직일 픽셀 수)
     public float groundSpd;
     // 가던방향 바꾸거나 속도 0에서 groundSpd 까지 도달하는데 걸리는 시간
     public float groundSpdReachTime;
     // 가다 멈췄을때 관성으로 미끄러지게할 거리
     public float groundStopDist;
-
     //-------------------------------------------------------
-
+    // 중력은 유니티 빌트인 피직스2d의 변수 쓰고.
+    // fallSpeed <-최대 낙하속도.
+    // 거기에 중력만큼 엑셀 하는거인듯
+    public float maxFallSpd;
+    //-------------------------------------------------------
     // 벨로시티
     public Vector2 velocity;
-
     // 바라보는 방향
     public bool isFacingRight;
     #endregion
@@ -81,6 +83,9 @@ public class MyPlayerEngine : MonoBehaviour
         }
         // 0은 인풋 없는것이니 안바꾸고 방향 그대로 둬야함
     }
+    //-------------------------------------------------------
+    // 중력 메소드
+
     //-------------------------------------------------------
     // 벨로시티 가속 메소드
     private float Accelerate (float velocity, float accel, float target)
