@@ -4,4 +4,11 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/21930064JoJoonHee/MainMenu/Test Main Menu.unity
+    guid: 83357d31081457f42afb1b6d8e66b109
+  - enabled: 1
+    path: Assets/21930064JoJoonHee/ModifiedLevel/ModifiedPlatformer.unity
+    guid: 6bf92091253ea8c468e2f9faee79a3c2
+  m_configObjects: {}
