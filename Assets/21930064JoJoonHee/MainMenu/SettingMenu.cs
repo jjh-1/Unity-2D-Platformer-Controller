@@ -25,4 +25,14 @@ public class SettingMenu : MonoBehaviour
         QualitySettings.SetQualityLevel(qualityIndex);
     }
     #endregion
+
+    #region 전체화면 메소드
+    // 여억시 마찬가지로 토글 이벤트핸들러에서 자동으로 다이나믹 불 옵션 생김
+    // ! 유니티 에디터에선 작동안하고 빌드 해야함 !
+    public void SwitchFullScreen (bool isFullScreen)
+    {
+        Debug.Log("Switched FullScreen");
+        Screen.fullScreen = isFullScreen;    
+    }
+    #endregion
 }
