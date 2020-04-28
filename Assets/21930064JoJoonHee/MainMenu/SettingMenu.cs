@@ -12,6 +12,6 @@ public class SettingMenu : MonoBehaviour
     public void SetVolume (float volume)
     {
         // @ 첫번째 아규먼트는 유니티 믹서에서 옵션으로 노출시킨 볼륨 변수 커스텀 이름
-        audioMixer.SetFloat("MyVolume", volume);
+        audioMixer.SetFloat("ExposedVolume", volume);
     }
 }
