@@ -1,4 +1,8 @@
 # 21930064 Jo Joon-Hee (jhj9490@gmail.com) forked this project for opensource midterm project
+
+Additional opensource resources :
+1. [Sunny Land - Pixel Game Art] by ansimuz (https://ansimuz.itch.io/sunny-land-pixel-game-art)
+
 =======================
 # Unity 2D Platformer Controller
 =======================
