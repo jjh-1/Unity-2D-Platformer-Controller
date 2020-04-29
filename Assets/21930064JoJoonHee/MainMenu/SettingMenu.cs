@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio; // @ 오디오관련
+using UnityEngine.UI;
+using TMPro;
 
 public class SettingMenu : MonoBehaviour
 {
@@ -33,6 +35,36 @@ public class SettingMenu : MonoBehaviour
     {
         Debug.Log("Switched FullScreen");
         Screen.fullScreen = isFullScreen;    
+    }
+    #endregion
+
+    #region 해상도 관련 변수, 메소드
+
+    // 해상도 드랍다운 인스턴스 (인스펙터 지정)
+    public TMP_Dropdown resolutionDropdown;
+
+    // 리솔루션 정보 배열
+    Resolution[] resolutions;
+
+    // @@@@ 유저마다 모니터 다 다를테니 모니터에서 가능한 해상도 정보 가져와 지정  
+    private void Start()
+    {
+        // 현재 모니터에 지원하는 모든 해상도 가져옴
+        resolutions = Screen.resolutions; 
+
+        // 해상도 드랍다운 내용물들 클리어
+        resolutionDropdown.ClearOptions();
+
+        // 스트럭트 배열인 resolutions 의 정보들을 스트링으로 변환후 리스트에 저장 후 드랍다운에 옵션추가
+        List<string> resolutionOptions = new List<string>();
+        for(int i = 0; i < resolutions.Length; i++)
+        {
+            // 대략 1920x1080 이런 포맷으로
+            string option = resolutions[i].width + "x" + resolutions[i].height;
+            resolutionOptions.Add(option);
+        }
+        resolutionDropdown.AddOptions(resolutionOptions);
+        
     }
     #endregion
 }
