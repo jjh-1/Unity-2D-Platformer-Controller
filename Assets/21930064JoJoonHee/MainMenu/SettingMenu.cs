@@ -10,10 +10,20 @@ public class SettingMenu : MonoBehaviour
 {
     // 셋팅 글로벌로 저장되게함
     public Slider volumeSlider;
+    public Toggle fullScreenToggle;
+    public TMP_Dropdown qualityDropdown;
+
     private void Awake()
     {
+        //볼륨 글로벌 셋팅
         volumeSlider.value = TransGlobal.volume;
         SetVolume(TRANSGLOBAL.TransGlobal.volume);
+        //풀스크린 글로벌 셋팅
+        fullScreenToggle.isOn = TRANSGLOBAL.TransGlobal.isFullScreen;
+        SwitchFullScreen(TRANSGLOBAL.TransGlobal.isFullScreen);
+        //퀄리티 글로벌 셋팅
+        qualityDropdown.value = TRANSGLOBAL.TransGlobal.qualityIndex;
+        SetQuality(TRANSGLOBAL.TransGlobal.qualityIndex);
     }
     
     // ! 이벤트에 연결해줄거니 메소드들 퍼블릭이어야함 !
@@ -36,6 +46,7 @@ public class SettingMenu : MonoBehaviour
     // 마찬가지로 드랍박스 이벤트 핸들러의 옵션에 다이나믹 인트가 나옴
     public void SetQuality(int qualityIndex)
     {
+        TRANSGLOBAL.TransGlobal.qualityIndex = qualityIndex;
         QualitySettings.SetQualityLevel(qualityIndex);
     }
     #endregion
@@ -45,6 +56,7 @@ public class SettingMenu : MonoBehaviour
     // ! 유니티 에디터에선 작동안하고 빌드 해야함 !
     public void SwitchFullScreen(bool isFullScreen)
     {
+        TRANSGLOBAL.TransGlobal.isFullScreen = isFullScreen;
         Debug.Log("Switched FullScreen");
         Screen.fullScreen = isFullScreen;
     }
@@ -78,9 +90,9 @@ public class SettingMenu : MonoBehaviour
             resolutionOptions.Add(option);
 
             // 지원 가능한 해상도면 
-            if ((resolutions[i].width == Screen.currentResolution.width)
+            if ((resolutions[i].width == Screen.width)
                 &&
-                resolutions[i].height == Screen.currentResolution.height)
+                resolutions[i].height == Screen.height)
             {
                 currResolutionIndex = i;
             }

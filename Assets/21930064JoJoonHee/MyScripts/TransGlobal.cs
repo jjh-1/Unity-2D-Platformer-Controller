@@ -8,7 +8,8 @@ namespace TRANSGLOBAL // 셋팅관련 변수 글로벌로 관리
     {
         // 셋팅관련 변수 글로벌로 관리
         public static float volume = 0;
-
+        public static bool isFullScreen = false;
+        public static int qualityIndex = 2;
 
         // 오디오 관련
         private static TransGlobal audioManager;
