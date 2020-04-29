@@ -13,7 +13,7 @@ public class SettingMenu : MonoBehaviour
     // ? 인스펙터에서 레퍼런스 지정 ?
     public AudioMixer audioMixer;
     // @!!!! 메소드의 파라미터가 float 이면 슬라이더의 유니티 이벤트 핸들러에서 다이나믹 플롯 옵션으로 이 메소드에 값주며 지정가능
-    public void SetVolume (float volume)
+    public void SetVolume(float volume)
     {
         // @ 첫번째 아규먼트는 유니티 믹서에서 옵션으로 노출시킨 볼륨 변수 커스텀 이름
         audioMixer.SetFloat("ExposedVolume", volume);
@@ -22,7 +22,7 @@ public class SettingMenu : MonoBehaviour
 
     #region 퀄리티 변경 메소드
     // 마찬가지로 드랍박스 이벤트 핸들러의 옵션에 다이나믹 인트가 나옴
-    public void SetQuality (int qualityIndex)
+    public void SetQuality(int qualityIndex)
     {
         QualitySettings.SetQualityLevel(qualityIndex);
     }
@@ -31,10 +31,10 @@ public class SettingMenu : MonoBehaviour
     #region 전체화면 메소드
     // 여억시 마찬가지로 토글 이벤트핸들러에서 자동으로 다이나믹 불 옵션 생김
     // ! 유니티 에디터에선 작동안하고 빌드 해야함 !
-    public void SwitchFullScreen (bool isFullScreen)
+    public void SwitchFullScreen(bool isFullScreen)
     {
         Debug.Log("Switched FullScreen");
-        Screen.fullScreen = isFullScreen;    
+        Screen.fullScreen = isFullScreen;
     }
     #endregion
 
@@ -50,21 +50,39 @@ public class SettingMenu : MonoBehaviour
     private void Start()
     {
         // 현재 모니터에 지원하는 모든 해상도 가져옴
-        resolutions = Screen.resolutions; 
+        resolutions = Screen.resolutions;
 
         // 해상도 드랍다운 내용물들 클리어
         resolutionDropdown.ClearOptions();
 
+        int currResolutionIndex = 0;
+
         // 스트럭트 배열인 resolutions 의 정보들을 스트링으로 변환후 리스트에 저장 후 드랍다운에 옵션추가
         List<string> resolutionOptions = new List<string>();
-        for(int i = 0; i < resolutions.Length; i++)
+        for (int i = 0; i < resolutions.Length; i++)
         {
             // 대략 1920x1080 이런 포맷으로
-            string option = resolutions[i].width + "x" + resolutions[i].height;
+            string option = resolutions[i].width + " x " + resolutions[i].height;
             resolutionOptions.Add(option);
+
+            // 지원 가능한 해상도면 
+            if ((resolutions[i].width == Screen.currentResolution.width)
+                &&
+                resolutions[i].height == Screen.currentResolution.height)
+            {
+                currResolutionIndex = i;
+            }
         }
         resolutionDropdown.AddOptions(resolutionOptions);
-        
+        resolutionDropdown.value = currResolutionIndex;
+        resolutionDropdown.RefreshShownValue();
+    }
+
+    public void SetResolution(int resolutionIndex)
+    { 
+        Debug.Log("new resolution set");
+        Resolution resolution = resolutions[resolutionIndex];
+        Screen.SetResolution(resolution.width, resolution.height, Screen.fullScreen);       
     }
     #endregion
 }
