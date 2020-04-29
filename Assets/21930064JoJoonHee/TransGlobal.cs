@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AudioManager : MonoBehaviour
+public class TransGlobal : MonoBehaviour
 {
-    private static AudioManager audioManager;
+    private static TransGlobal audioManager;
 
     private void Awake()
     {

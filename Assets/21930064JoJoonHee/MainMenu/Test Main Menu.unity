@@ -2854,7 +2854,7 @@ GameObject:
   - component: {fileID: 976150520}
   - component: {fileID: 976150522}
   m_Layer: 0
-  m_Name: MusicManger
+  m_Name: TransGlobal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
