@@ -53524,7 +53524,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11405038, guid: f53f0e5cd92ba5148aace93d59b06aaf, type: 3}
       propertyPath: jumpRotationSpeed
-      value: 0
+      value: 1000
       objectReference: {fileID: 0}
     - target: {fileID: 21239396, guid: f53f0e5cd92ba5148aace93d59b06aaf, type: 3}
       propertyPath: m_Enabled
