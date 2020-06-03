@@ -219,7 +219,7 @@ MonoBehaviour:
   wallSlideSpeed: 5
   timeToWallSlideSpeed: 3
   enableCornerGrabs: 1
-  cornerGrabDuration: 0
+  cornerGrabDuration: 1
   cornerJumpMultiplier: 0.5
   cornerDistanceCheck: 0.2
   normalizedValidWallInteraction: 0.2
