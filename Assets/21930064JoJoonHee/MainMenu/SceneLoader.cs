@@ -7,13 +7,15 @@ public class SceneLoader : MonoBehaviour
 {
     public Animator fadeAnimator; // 인스펙터에서 지정
 
-    private void Update()
+    /*
+    private void Update() 
     {
-        if(Input.GetMouseButtonDown(0))
+        if(Input.GetMouseButtonDown(0)) // 테스트
         {
             LoadNextLevel();
         }
     }
+    */
 
     // 게임시작 버튼이나 특정 트리거 발동시 다음 씬 불러오게할 메소드
     public void LoadNextLevel()
