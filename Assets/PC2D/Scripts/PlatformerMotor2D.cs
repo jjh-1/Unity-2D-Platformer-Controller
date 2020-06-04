@@ -1047,7 +1047,7 @@ public class PlatformerMotor2D : MonoBehaviour
         return ((0x1 << obj.layer) & staticEnvLayerMask) != 0;
     }
 
-    #endregion
+
 
     #region Private
 
@@ -1628,6 +1628,12 @@ public class PlatformerMotor2D : MonoBehaviour
 
     private void FixedUpdate()
     {
+        // 대화창 나온상태에선 못움직이게
+        if(FindObjectOfType<DialogueManager>().isShowingDialogue)
+        {
+            return;
+        }
+
         // Frozen?
         if (frozen || timeScale == 0)
         {
@@ -3479,3 +3485,4 @@ public class PlatformerMotor2D : MonoBehaviour
 
     #endregion
 }
+#endregion
