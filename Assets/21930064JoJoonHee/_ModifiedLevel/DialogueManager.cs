@@ -51,8 +51,21 @@ public class DialogueManager : MonoBehaviour
             return;
         }
 
+        // 하나씩 디큐후 텍스트 오브젝트에 지정
         string dialogue = dialogueQueue.Dequeue();
-        dialogueText.text = dialogue;
+        StopAllCoroutines(); // @ 혹시 다 끝나기전에 e키눌러 스킵해서 새 코루틴 시작하면 얽혀버리니 그거 방지  
+        StartCoroutine(DialogueOneByOne(dialogue));
+    }
+
+    // 글자 하나씩 출력하기위한 이누머레이터
+    IEnumerator DialogueOneByOne(string dialogue)
+    {
+        dialogueText.text = "";
+        foreach (char l in dialogue.ToCharArray()) // ToCharArray() : 스트링을 char배열로
+        {
+            dialogueText.text += l; // 돌때마다 하나씩 추가
+            yield return new WaitForSeconds(0.025f); // WaitForSeconds 메소드의 아규먼트초마다 글자 하나씩 나오게. 메소드 말고 그냥 yeild return null 은 1프레임 대기
+        }
     }
 
     private void EndDialogue()

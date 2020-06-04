@@ -23,6 +23,7 @@ public class SceneLoader : MonoBehaviour
         StartCoroutine(ScreenFade(SceneManager.GetActiveScene().buildIndex + 1));
     }
 
+    // 페이드 아웃 다 끝난후에 다음씬 불러오기위한 이누머레이터
     IEnumerator ScreenFade(int sceneBuildIndex)
     {
         // 페이드 애니메이션 시작
@@ -30,9 +31,9 @@ public class SceneLoader : MonoBehaviour
 
         // 해당 시간동안 대기
         // 고칠것 : 리터럴 대신 애니메이션에서 시간 가져오기
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(1f); // 1초 대기
 
-        // 다음 씬 불러옴
+        // 끝나면 다음 씬 불러옴
         SceneManager.LoadScene(sceneBuildIndex);
     }
 }
