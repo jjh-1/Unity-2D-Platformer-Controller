@@ -8,10 +8,12 @@ using TMPro;
 public class DialogueManager : MonoBehaviour
 {
     // 인스펙터에서 지정
+    public Animator animator;
     public TextMeshProUGUI nameText;
     public TextMeshProUGUI dialogueText;
 
     private Queue<string> dialogueQueue;
+
     public bool isShowingDialogue = false; // 다이얼로그 보여주는중 못움직이게용
 
     private void Start()
@@ -21,6 +23,9 @@ public class DialogueManager : MonoBehaviour
 
     public void StartDialogue (DialogueTrigger dT)
     {
+        // 패널 펼치게 애니메이터 불리언 셋
+        animator.SetBool("IsDialoguePanelOpen", true);
+
         isShowingDialogue = true;
 
         nameText.text = dT.name;
@@ -52,6 +57,8 @@ public class DialogueManager : MonoBehaviour
 
     private void EndDialogue()
     {
+        // 패널 닫게 애니메이터 불리언 셋
+        animator.SetBool("IsDialoguePanelOpen", false);
         isShowingDialogue = false;
     }
 }

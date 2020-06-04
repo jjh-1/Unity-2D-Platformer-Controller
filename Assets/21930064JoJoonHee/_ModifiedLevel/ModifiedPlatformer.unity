@@ -132,6 +132,7 @@ GameObject:
   - component: {fileID: 29237628}
   - component: {fileID: 29237630}
   - component: {fileID: 29237629}
+  - component: {fileID: 29237631}
   m_Layer: 5
   m_Name: Panel
   m_TagString: Untagged
@@ -197,6 +198,25 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 29237627}
   m_CullTransparentMesh: 0
+--- !u!95 &29237631
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 29237627}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 2d896f58ec795eb4e9c9aa3d78c84408, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &123106609
 GameObject:
   m_ObjectHideFlags: 0
@@ -48814,6 +48834,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcedcacfade5ce642a27afff6edc111d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  animator: {fileID: 29237631}
   nameText: {fileID: 923356447}
   dialogueText: {fileID: 1456869008}
   isShowingDialogue: 0
@@ -51045,7 +51066,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -369, y: -297}
+  m_AnchoredPosition: {x: -312, y: -363}
   m_SizeDelta: {x: 735.8812, y: 124.85321}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &856133847
@@ -51601,7 +51622,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -374, y: -216}
+  m_AnchoredPosition: {x: -374, y: -201}
   m_SizeDelta: {x: 735.8812, y: 124.85321}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &923356447
@@ -51657,7 +51678,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 1
-  m_textAlignment: 513
+  m_textAlignment: 257
   m_characterSpacing: 0
   m_wordSpacing: 0
   m_lineSpacing: 0
@@ -52011,8 +52032,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: 'Sign1 :'
   dialogues:
-  - "Welcome to [JJH Project] \n[Basic movement tutorial level] "
-  - Press [Space bar] to jump !
+  - "Welcome to [JJH Project] \n[Basic movement tutorial level]."
+  - Press [Space bar] to jump.
 --- !u!61 &1025040300
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -53106,7 +53127,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 1
-  m_textAlignment: 257
+  m_textAlignment: 264
   m_characterSpacing: 0
   m_wordSpacing: 0
   m_lineSpacing: 0
