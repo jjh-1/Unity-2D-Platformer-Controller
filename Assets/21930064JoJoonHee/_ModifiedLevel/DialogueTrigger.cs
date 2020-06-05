@@ -5,6 +5,8 @@ using UnityEngine;
 [System.Serializable] // 인스펙터에 나오도록함
 public class DialogueTrigger : MonoBehaviour
 {
+    public GameObject feedbackArrow; // 트리거 안에 있을때만 보이게 할거
+
     // 이 두 변수는 따로 다른 클래스에 넣는게 성능에 더 좋긴할듯
     public string name;
 
@@ -20,6 +22,8 @@ public class DialogueTrigger : MonoBehaviour
         // 콜라이더 안에 있는게 플레이어면
         if (collision.name == "TestPlayer" )
         {
+            feedbackArrow.SetActive(true);
+
             isInTrigger = true;
         }
     }
@@ -28,6 +32,8 @@ public class DialogueTrigger : MonoBehaviour
     {
         if (collision.name == "TestPlayer")
         {
+            feedbackArrow.SetActive(false);
+
             isInTrigger = false;
         }
     }

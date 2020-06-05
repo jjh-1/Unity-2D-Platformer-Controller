@@ -12,9 +12,8 @@ public class Goal : MonoBehaviour
     {
         if(o.name == "TestPlayer")
         {
+            o.GetComponent<PlatformerMotor2D>().frozen = true; // 도착하면 멈추게
             sceneLoader.LoadNextLevel();
         }
-        
     }
-
 }
