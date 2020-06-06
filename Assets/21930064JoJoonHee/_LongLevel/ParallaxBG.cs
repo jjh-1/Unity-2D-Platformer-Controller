@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine;
 
+// 레벨크기 제한되있으니 굳이 무한배경되게 만들필욘없을듯
+
 public class ParallaxBG : MonoBehaviour
 {
     public Vector2 bGMoveMultiplier; //멀리있는건 수치높게, 가까이있는건 낮게
