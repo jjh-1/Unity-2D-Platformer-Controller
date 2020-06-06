@@ -11,6 +11,10 @@ namespace TRANSGLOBAL // 셋팅관련 변수 글로벌로 관리
         public static bool isFullScreen = false;
         public static int qualityIndex = 2;
 
+        // 세이브관련 변수 글로벌
+        public static Vector2 loadedPlayerPos;
+        public static bool isLoadedGame;
+
         // 오디오 관련
         private static TransGlobal audioManager;
         private void Awake()

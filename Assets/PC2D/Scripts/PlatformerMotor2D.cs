@@ -1,6 +1,7 @@
 using System;
 using PC2D;
 using UnityEngine;
+using TRANSGLOBAL;
 
 [RequireComponent(typeof(BoxCollider2D))]
 public class PlatformerMotor2D : MonoBehaviour
@@ -1214,6 +1215,13 @@ public class PlatformerMotor2D : MonoBehaviour
 
     private void Awake()
     {
+        // 메인화면씬에서 로드 눌렀으면 불러온 위치로 플레이어 위치변경
+        if(TRANSGLOBAL.TransGlobal.isLoadedGame)
+        {
+            transform.position = TRANSGLOBAL.TransGlobal.loadedPlayerPos;
+            TRANSGLOBAL.TransGlobal.isLoadedGame = false;
+        }
+
         SetDashFunctions();
         _collider2D = GetComponent<Collider2D>();
         _rigidbody2D = GetComponent<Rigidbody2D>();

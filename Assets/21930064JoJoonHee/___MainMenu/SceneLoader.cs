@@ -23,6 +23,12 @@ public class SceneLoader : MonoBehaviour
         StartCoroutine(ScreenFade(SceneManager.GetActiveScene().buildIndex + 1));
     }
 
+    // 세이브했던 씬의 인덱스의 씬 불러오게할 메소드
+    public void LoadSavedLevel(int i)
+    {
+        StartCoroutine(ScreenFade(i));
+    }
+
     // 페이드 아웃 다 끝난후에 다음씬 불러오기위한 이누머레이터
     IEnumerator ScreenFade(int sceneBuildIndex)
     {
