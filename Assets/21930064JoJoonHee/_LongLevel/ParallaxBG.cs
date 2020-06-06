@@ -1,9 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections;
 using UnityEngine;
 
 public class ParallaxBG : MonoBehaviour
 {
+    public Vector2 bGMoveMultiplier; //멀리있는건 수치높게, 가까이있는건 낮게
+
     private Transform camCurrTransform; // 카메라 현위치 저장
 
     private Vector3 camLastPosition; // 이전프레임의 카메라 위치
@@ -18,7 +21,7 @@ public class ParallaxBG : MonoBehaviour
     private void LateUpdate()
     {
         Vector3 deltaMove = camCurrTransform.position - camLastPosition;
-        transform.position += deltaMove*0.5f; // 카메라 속도보다 0.5배 느리게 배경 움직임
+        transform.position += new Vector3(deltaMove.x * bGMoveMultiplier.x, deltaMove.y * bGMoveMultiplier.y); // 카메라 속도보다 bGMoveMultiplier배 느리게 배경 움직임
         camLastPosition = camCurrTransform.position;
     }
 }
