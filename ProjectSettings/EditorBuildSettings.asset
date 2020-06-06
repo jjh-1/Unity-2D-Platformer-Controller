@@ -6,12 +6,12 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/21930064JoJoonHee/__MainMenu/Test Main Menu.unity
+    path: Assets/21930064JoJoonHee/___MainMenu/Test Main Menu.unity
     guid: 83357d31081457f42afb1b6d8e66b109
   - enabled: 1
-    path: Assets/21930064JoJoonHee/_ModifiedLevel/ModifiedPlatformer.unity
+    path: Assets/21930064JoJoonHee/__ModifiedLevel/ModifiedPlatformer.unity
     guid: 6bf92091253ea8c468e2f9faee79a3c2
   - enabled: 1
     path: Assets/21930064JoJoonHee/_LongLevel/LongLevel.unity
-    guid: 035be9be221a27643920d4a32359875f
+    guid: d8fa74eb3d989ea40bff29fdeb9ae9ae
   m_configObjects: {}
