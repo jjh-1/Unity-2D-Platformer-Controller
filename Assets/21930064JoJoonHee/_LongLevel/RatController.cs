@@ -10,7 +10,7 @@ public class RatController : MonoBehaviour
     {
         motor = GetComponent<PlatformerMotor2D>();
 
-        motor.normalizedXMovement = 1;
+        motor.normalizedXMovement = -1;
     }
 
     // Update is called once per frame
@@ -19,6 +19,8 @@ public class RatController : MonoBehaviour
         if (motor.velocity.x == 0)
         {
             motor.normalizedXMovement *= -1;
+
+            transform.localScale = new Vector3(transform.localScale.x * -1, 1, 1);
         }
     }
 }
