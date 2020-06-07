@@ -4,15 +4,21 @@ using UnityEngine;
 
 public class RatController : MonoBehaviour
 {
-    // Start is called before the first frame update
+    private PlatformerMotor2D motor;
+
     void Start()
     {
-        
+        motor = GetComponent<PlatformerMotor2D>();
+
+        motor.normalizedXMovement = 1;
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if (motor.velocity.x == 0)
+        {
+            motor.normalizedXMovement *= -1;
+        }
     }
 }
