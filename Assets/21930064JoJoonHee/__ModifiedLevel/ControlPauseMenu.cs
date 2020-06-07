@@ -55,8 +55,7 @@ public class ControlPauseMenu : MonoBehaviour
     public void SaveGame()
     {
         //플레이어의 위치 가져옴
-        Vector3 playerPos = FindObjectOfType<PlatformerMotor2D>().transform.position;
-
+        Vector3 playerPos = FindObjectOfType<PlayerController2D>().transform.position;
         //PlayerPrefs : 유니티기본 외부파일저장방식. 윈도우의경우 레지스터에저장
         PlayerPrefs.SetFloat("playerPosX", playerPos.x);
         PlayerPrefs.SetFloat("playerPosY", playerPos.y);

@@ -1216,7 +1216,7 @@ public class PlatformerMotor2D : MonoBehaviour
     private void Awake()
     {
         // 메인화면씬에서 로드 눌렀으면 불러온 위치로 플레이어 위치변경
-        if(TRANSGLOBAL.TransGlobal.isLoadedGame)
+        if(TRANSGLOBAL.TransGlobal.isLoadedGame && transform.tag == "Player")
         {
             transform.position = TRANSGLOBAL.TransGlobal.loadedPlayerPos;
             TRANSGLOBAL.TransGlobal.isLoadedGame = false;
