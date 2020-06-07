@@ -6,6 +6,7 @@ public class RatController : MonoBehaviour
 {
     public Animator animator;
 
+
     public BoxCollider2D boxCollider2D;
 
     private PlatformerMotor2D motor;

@@ -287,4 +287,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 5942640693316605512}
+  firstFacing: -1
   boxCollider2D: {fileID: 3825516802930939468}
