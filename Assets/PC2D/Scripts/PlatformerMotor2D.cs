@@ -3125,8 +3125,8 @@ public class PlatformerMotor2D : MonoBehaviour
         return surfaces;
     }
 
-    // 콜라이더 주변 뭐있나 체크하고 저장하는 메소드
-    private CollidedSurface CheckSurroundings(bool forceCheck)
+    // 콜라이더 주변 뭐있나 체크하고 저장,리턴하는 메소드
+    public CollidedSurface CheckSurroundings(bool forceCheck)
     {
         CollidedSurface surfaces = CollidedSurface.None;
 

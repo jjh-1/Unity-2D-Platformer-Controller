@@ -16,11 +16,12 @@ public class RatController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (motor.velocity.x == 0)
+        if ((motor.facingLeft && motor.collidingAgainst == (PlatformerMotor2D.CollidedSurface.Ground | PlatformerMotor2D.CollidedSurface.LeftWall))
+            || (!motor.facingLeft && motor.collidingAgainst == (PlatformerMotor2D.CollidedSurface.Ground | PlatformerMotor2D.CollidedSurface.RightWall)))
         {
             motor.normalizedXMovement *= -1;
-
             transform.localScale = new Vector3(transform.localScale.x * -1, 1, 1);
         }
+
     }
 }
