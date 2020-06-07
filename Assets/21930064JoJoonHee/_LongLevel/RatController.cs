@@ -4,7 +4,12 @@ using UnityEngine;
 
 public class RatController : MonoBehaviour
 {
+    public Animator animator;
+
+    public BoxCollider2D boxCollider2D;
+
     private PlatformerMotor2D motor;
+
 
     void Start()
     {
@@ -30,6 +35,13 @@ public class RatController : MonoBehaviour
 
     public void killMe()
     {
-        gameObject.SetActive(false);
+        // 플레이어 죽이는 트리거 비활성화
+        boxCollider2D.enabled = false;
+        motor.frozen = true;
+
+        animator.SetTrigger("KillMe");
+
+        //죽는 애니메이션 끝난후 오브젝트 삭제
+        Destroy(gameObject, animator.GetCurrentAnimatorStateInfo(0).length-0.2f);
     }
 }
