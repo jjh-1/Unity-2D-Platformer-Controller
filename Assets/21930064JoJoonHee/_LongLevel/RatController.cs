@@ -27,4 +27,9 @@ public class RatController : MonoBehaviour
         }
 
     }
+
+    public void killMe()
+    {
+        gameObject.SetActive(false);
+    }
 }
